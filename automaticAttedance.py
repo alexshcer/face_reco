@@ -1,25 +1,23 @@
-import tkinter as tk
-from tkinter import *
-import os, cv2
-import shutil
-import csv
-import numpy as np
-from PIL import ImageTk, Image
-import pandas as pd
+import cv2
 import datetime
+import os
+import subprocess
+import sys
 import time
-import tkinter.ttk as tkk
-import tkinter.font as font
+from tkinter import *
+from tkinter import ttk
 
-haarcasecade_path = "C:\\Users\\HP\\Desktop\\face_reco\\haarcascade_frontalface_default.xml"
-trainimagelabel_path = (
-    "C:\\Users\\HP\\Desktop\\face_reco\\TrainingImageLabel\\Trainner.yml"
-)
-trainimage_path = "C:\\Users\\HP\\Desktop\\face_reco\\TrainingImage"
-studentdetail_path = (
-    "C:\\Users\\HP\\Desktop\\face_reco\\StudentDetails\\studentdetails.csv"
-)
-attendance_path = "C:\\Users\\HP\\Desktop\\face_reco\\Attendance"
+import pandas as pd
+
+haarcasecade_path = "/home/manjaro/Downloads/face_reco/haarcascade_frontalface_default.xml"
+trainimagelabel_path = "/home/manjaro/Downloads/face_reco/TrainingImageLabel/Trainner.yml"
+trainimage_path = "/home/manjaro/Downloads/face_reco/TrainingImage"
+studentdetail_path = "/home/manjaro/Downloads/face_reco/StudentDetails/studentdetails.csv"
+attendance_path = "/home/manjaro/Downloads/face_reco/Attendance"
+
+darksem = "#252526"
+
+
 # for choose subject and fill attendance
 def subjectChoose(text_to_speech):
     def FillAttendance():
@@ -29,7 +27,7 @@ def subjectChoose(text_to_speech):
         print(now)
         print(future)
         if sub == "":
-            t = "Please enter the subject name!!!"
+            t = "Please enter the subject name!"
             text_to_speech(t)
         else:
             try:
@@ -37,16 +35,13 @@ def subjectChoose(text_to_speech):
                 try:
                     recognizer.read(trainimagelabel_path)
                 except:
-                    e = "Model not found,please train model"
+                    """e = "Model not found, please train model"
                     Notifica.configure(
                         text=e,
-                        bg="black",
-                        fg="yellow",
                         width=33,
-                        font=("times", 15, "bold"),
                     )
                     Notifica.place(x=20, y=250)
-                    text_to_speech(e)
+                    text_to_speech(e)"""
                 facecasCade = cv2.CascadeClassifier(haarcasecade_path)
                 df = pd.read_csv(studentdetail_path)
                 cam = cv2.VideoCapture(0)
@@ -60,7 +55,7 @@ def subjectChoose(text_to_speech):
                     for (x, y, w, h) in faces:
                         global Id
 
-                        Id, conf = recognizer.predict(gray[y : y + h, x : x + w])
+                        Id, conf = recognizer.predict(gray[y: y + h, x: x + w])
                         if conf < 70:
                             print(conf)
                             global Subject
@@ -116,35 +111,31 @@ def subjectChoose(text_to_speech):
                 # fileName = "Attendance/" + Subject + ".csv"
                 path = os.path.join(attendance_path, Subject)
                 fileName = (
-                    f"{path}/"
-                    + Subject
-                    + "_"
-                    + date
-                    + "_"
-                    + Hour
-                    + "-"
-                    + Minute
-                    + "-"
-                    + Second
-                    + ".csv"
+                        f"{path}/"
+                        + Subject
+                        + "_"
+                        + date
+                        + "_"
+                        + Hour
+                        + "-"
+                        + Minute
+                        + "-"
+                        + Second
+                        + ".csv"
                 )
                 attendance = attendance.drop_duplicates(["Enrollment"], keep="first")
                 print(attendance)
                 attendance.to_csv(fileName, index=False)
 
                 m = "Attendance Filled Successfully of " + Subject
-                Notifica.configure(
+                """Notifica.configure(
                     text=m,
-                    bg="black",
-                    fg="yellow",
                     width=33,
                     relief=RIDGE,
-                    bd=5,
-                    font=("times", 15, "bold"),
                 )
                 text_to_speech(m)
 
-                Notifica.place(x=20, y=250)
+                Notifica.place(x=20, y=250)"""
 
                 cam.release()
                 cv2.destroyAllWindows()
@@ -164,7 +155,6 @@ def subjectChoose(text_to_speech):
                     for col in reader:
                         c = 0
                         for row in col:
-
                             label = tkinter.Label(
                                 root,
                                 width=10,
@@ -187,35 +177,46 @@ def subjectChoose(text_to_speech):
 
     ###windo is frame for subject chooser
     subject = Tk()
-    # windo.iconbitmap("AMS.ico")
-    subject.title("Subject...")
-    subject.geometry("580x320")
+    subject.tk.eval("""
+    set base_theme_dir /home/manjaro/Downloads/face_reco/Themes/awthemes
+
+    package ifneeded awthemes 10.4.0 \
+        [list source [file join $base_theme_dir awthemes.tcl]]
+    package ifneeded colorutils 4.8 \
+        [list source [file join $base_theme_dir colorutils.tcl]]
+    package ifneeded awdark 7.12 \
+        [list source [file join $base_theme_dir awdark.tcl]]
+    package ifneeded awlight 7.6 \
+        [list source [file join $base_theme_dir awlight.tcl]]
+    """)
+    # load the awdark and awlight themes
+    subject.tk.call("package", "require", 'awdark')
+    subject.tk.call("package", "require", 'awlight')
+    s = ttk.Style(subject)
+    s.theme_use('awdark')
+    # window.iconbitmap("AMS.ico")
+    subject.title("Take Attendance")
+    subject.geometry("500x200")
+    subject.configure(background=darksem)
     subject.resizable(0, 0)
-    subject.configure(background="black")
     # subject_logo = Image.open("UI_Image/0004.png")
     # subject_logo = subject_logo.resize((50, 47), Image.ANTIALIAS)
     # subject_logo1 = ImageTk.PhotoImage(subject_logo)
-    titl = tk.Label(subject, bg="black", relief=RIDGE, bd=10, font=("arial", 30))
-    titl.pack(fill=X)
     # l1 = tk.Label(subject, image=subject_logo1, bg="black",)
     # l1.place(x=100, y=10)
-    titl = tk.Label(
+    titl = ttk.Label(
         subject,
         text="Enter the Subject Name",
-        bg="black",
-        fg="green",
         font=("arial", 25),
     )
-    titl.place(x=160, y=12)
-    Notifica = tk.Label(
+    titl.place(relx=0.5, rely=0.1, anchor=CENTER)
+
+    """Notifica = ttk.Label(
         subject,
         text="Attendance filled Successfully",
-        bg="yellow",
-        fg="black",
         width=33,
-        height=2,
-        font=("times", 15, "bold"),
     )
+    Notifica.place(relx=0.1, rely=0.25, anchor=W)"""
 
     def Attf():
         sub = tx.get()
@@ -223,59 +224,39 @@ def subjectChoose(text_to_speech):
             t = "Please enter the subject name!!!"
             text_to_speech(t)
         else:
-            os.startfile(
-                f"C:\\Users\\HP\\Desktop\\face_reco\\Attendance\\{sub}"
-            )
+            opener = "open" if sys.platform == "darwin" else "xdg-open"
+            f = f"/home/manjaro/Downloads/face_reco/Attendance/{sub}"
+            subprocess.call([opener, f])
 
-    attf = tk.Button(
+    attf = ttk.Button(
         subject,
         text="Check Sheets",
         command=Attf,
-        bd=7,
-        font=("times new roman", 15),
-        bg="black",
-        fg="yellow",
-        height=2,
-        width=10,
-        relief=RIDGE,
+        width=18,
     )
-    attf.place(x=360, y=170)
+    attf.place(relx=0.63, rely=0.7, anchor=CENTER)
 
-    sub = tk.Label(
+    sub = ttk.Label(
         subject,
-        text="Enter Subject",
-        width=10,
-        height=2,
-        bg="black",
-        fg="yellow",
-        bd=5,
+        text="Enter Subject:",
+        width=18,
         relief=RIDGE,
         font=("times new roman", 15),
     )
-    sub.place(x=50, y=100)
+    sub.place(relx=0.1, rely=0.4, anchor=W)
 
-    tx = tk.Entry(
+    tx = ttk.Entry(
         subject,
-        width=15,
-        bd=5,
-        bg="black",
-        fg="yellow",
-        relief=RIDGE,
+        width=30,
         font=("times", 30, "bold"),
     )
-    tx.place(x=190, y=100)
+    tx.place(relx=0.4, rely=0.4, anchor=W)
 
-    fill_a = tk.Button(
+    fill_a = ttk.Button(
         subject,
         text="Fill Attendance",
         command=FillAttendance,
-        bd=7,
-        font=("times new roman", 15),
-        bg="black",
-        fg="yellow",
-        height=2,
-        width=12,
-        relief=RIDGE,
+        width=18,
     )
-    fill_a.place(x=195, y=170)
+    fill_a.place(relx=0.33, rely=0.7, anchor=CENTER)
     subject.mainloop()

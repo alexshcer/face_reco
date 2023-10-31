@@ -6,17 +6,16 @@ import datetime
 import time
 
 
-
 # take Image of user
-def TakeImage(l1, l2, haarcasecade_path, trainimage_path, message, err_screen,text_to_speech):
-    if (l1 == "") and (l2==""):
-        t='Please Enter the your Enrollment Number and Name.'
+def TakeImage(l1, l2, haarcasecade_path, trainimage_path, message, err_screen, text_to_speech):
+    if (l1 == "") and (l2 == ""):
+        t = 'Please Enter the your Enrollment Number and Name.'
         text_to_speech(t)
-    elif l1=='':
-        t='Please Enter the your Enrollment Number.'
+    elif l1 == '':
+        t = 'Please Enter the your Enrollment Number.'
         text_to_speech(t)
     elif l2 == "":
-        t='Please Enter the your Name.'
+        t = 'Please Enter the your Name.'
         text_to_speech(t)
     else:
         try:
@@ -36,16 +35,16 @@ def TakeImage(l1, l2, haarcasecade_path, trainimage_path, message, err_screen,te
                     cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
                     sampleNum = sampleNum + 1
                     cv2.imwrite(
-                        f"{path}\ "
+                        f"{path}/"
                         + Name
                         + "_"
                         + Enrollment
                         + "_"
                         + str(sampleNum)
                         + ".jpg",
-                        gray[y : y + h, x : x + w],
+                        gray[y: y + h, x: x + w],
                     )
-                    cv2.imshow("Frame", img)
+                    cv2.imshow("Smile Bro", img)
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
                 elif sampleNum > 50:
@@ -54,14 +53,15 @@ def TakeImage(l1, l2, haarcasecade_path, trainimage_path, message, err_screen,te
             cv2.destroyAllWindows()
             row = [Enrollment, Name]
             with open(
-                "C:\\Users\\HP\\Desktop\\face_reco\\StudentDetails\\studentdetails.csv",
-                "a+",
+                    "/home/manjaro/Downloads/face_reco/StudentDetails/studentdetails.csv",
+                    "a+",
             ) as csvFile:
                 writer = csv.writer(csvFile, delimiter=",")
                 writer.writerow(row)
                 csvFile.close()
-            res = "Images Saved for ER No:" + Enrollment + " Name:" + Name
+            res = "Images Saved for \nER No: " + Enrollment + "\nName: " + Name
             message.configure(text=res)
+            message.place(relx=0.382, rely=0.60)
             text_to_speech(res)
         except FileExistsError as F:
             F = "Student Data already exists"
