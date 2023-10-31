@@ -30,9 +30,7 @@ trainimage_path = "/home/manjaro/Downloads/face_reco/TrainingImage"
 studentdetail_path = "/home/manjaro/Downloads/face_reco/StudentDetails/studentdetails.csv"
 attendance_path = "/home/manjaro/Downloads/face_reco/Attendance"
 
-
 darksem = "#252526"
-
 
 window = Tk()
 
@@ -65,6 +63,7 @@ window.configure(background=darksem)
 """frameA = tk.Frame()
 frameA.pack(side='top', fill=None)"""
 
+
 # to destroy screen
 def del_sc1():
     sc1.destroy()
@@ -82,20 +81,20 @@ def err_screen():
     ttk.Label(
         sc1,
         text="Enrollment & Name required!!!",
-        #fg="yellow",
-        #bg="black",
+        # fg="yellow",
+        # bg="black",
         font=("times", 20, " bold "),
     ).pack()
     ttk.Button(
         sc1,
         text="OK",
         command=del_sc1,
-        #fg="yellow",
-        #bg="black",
+        # fg="yellow",
+        # bg="black",
         width=9,
-        #height=1,
-        #activebackground="Red",
-        #font=("times", 20, " bold "),
+        # height=1,
+        # activebackground="Red",
+        # font=("times", 20, " bold "),
     ).place(x=110, y=50)
 
 
@@ -109,11 +108,11 @@ def testVal(inStr, acttyp):
 a = ttk.Label(
     window,
     text="IIT KGP Face Attendance Check",
-    #bg=darksem,
-    #fg="yellow",
-    #bd=10,
+    # bg=darksem,
+    # fg="yellow",
+    # bd=10,
     font=("Arial", 35),
-    #style='hFont',
+    # style='hFont',
 )
 a.place(relx=0.5, rely=0.15, anchor=CENTER)
 """
@@ -135,6 +134,7 @@ label3 = Label(window, image=v)
 label3.image = v
 label3.place(x=600, y=270)
 """
+
 
 def TakeImageUI():
     ImageUI = Tk()
@@ -163,7 +163,7 @@ def TakeImageUI():
 
     # image and title
     titl = ttk.Label(
-        ImageUI, text="Register Your Face", #bg="black", fg="green",
+        ImageUI, text="Register Your Face",
         font=("arial", 30),
     )
     titl.place(relx=0.5, rely=0.05, anchor=CENTER)
@@ -172,9 +172,9 @@ def TakeImageUI():
     a = ttk.Label(
         ImageUI,
         text="Enter the details:-",
-        #bg="black",
-        #fg="yellow",
-        #bd=10,
+        # bg="black",
+        # fg="yellow",
+        # bd=10,
         font=("arial", 24),
     )
     a.place(relx=0.22, rely=0.2, anchor=CENTER)
@@ -184,10 +184,10 @@ def TakeImageUI():
         ImageUI,
         text="Enrollment No.:",
         width=15,
-        #height=2,
-        #bg="black",
-        #fg="yellow",
-        #bd=5,
+        # height=2,
+        # bg="black",
+        # fg="yellow",
+        # bd=5,
         relief=RIDGE,
         font=("times new roman", 12),
     )
@@ -195,11 +195,11 @@ def TakeImageUI():
     txt1 = ttk.Entry(
         ImageUI,
         width=18,
-        #bd=5,
+        # bd=5,
         validate="key",
-        #bg="black",
-        #fg="yellow",
-        #relief=RIDGE,
+        # bg="black",
+        # fg="yellow",
+        # relief=RIDGE,
         font=("times", 25, "bold"),
     )
     txt1.place(relx=0.38, rely=0.36, anchor=W)
@@ -210,10 +210,10 @@ def TakeImageUI():
         ImageUI,
         text="Name:",
         width=15,
-        #height=2,
-        #bg="black",
-        #fg="yellow",
-        #bd=5,
+        # height=2,
+        # bg="black",
+        # fg="yellow",
+        # bd=5,
         relief=RIDGE,
         font=("times new roman", 12),
     )
@@ -221,10 +221,10 @@ def TakeImageUI():
     txt2 = ttk.Entry(
         ImageUI,
         width=18,
-        #bd=5,
-        #bg="black",
-        #fg="yellow",
-        #relief=RIDGE,
+        # bd=5,
+        # bg="black",
+        # fg="yellow",
+        # relief=RIDGE,
         font=("times", 25, "bold"),
     )
     txt2.place(relx=0.38, rely=0.46, anchor=W)
@@ -233,24 +233,24 @@ def TakeImageUI():
         ImageUI,
         text="Notification:",
         width=15,
-        #height=2,
-        #bg="black",
-        #fg="yellow",
-        #bd=5,
+        # height=2,
+        # bg="black",
+        # fg="yellow",
+        # bd=5,
         relief=RIDGE,
         font=("times new roman", 12),
     )
     lbl3.place(relx=0.14, rely=0.56, anchor=W)
 
-    #messagey = 0.56 #0.58
+    # messagey = 0.56 #0.58
     message = ttk.Label(
         ImageUI,
         text="",
         width=32,
-        #height=2,
-        #bd=5,
-        #bg="black",
-        #fg="yellow",
+        # height=2,
+        # bd=5,
+        # bg="black",
+        # fg="yellow",
         relief=RIDGE,
         font=("times new roman", 12, "bold"),
     )
@@ -277,13 +277,7 @@ def TakeImageUI():
         ImageUI,
         text="Take Image",
         command=take_image,
-        #bd=10,
-        #font=("times new roman", 18),
-        #bg="black",
-        #fg="yellow",
-        #height=2,
         width=12,
-        #relief=RIDGE,
     )
     takeImg.place(relx=0.34, rely=0.8, anchor=CENTER)
 
@@ -301,13 +295,7 @@ def TakeImageUI():
         ImageUI,
         text="Train Image",
         command=train_image,
-        #bd=10,
-        #font=("times new roman", 18),
-        #bg="black",
-        #fg="yellow",
-        #height=2,
         width=12,
-        #relief=RIDGE,
     )
     trainImg.place(relx=0.64, rely=0.8, anchor=CENTER)
 
@@ -316,11 +304,6 @@ r = ttk.Button(
     window,
     text="Register a new student",
     command=TakeImageUI,
-    #bd=10,
-    #font=("times new roman", 16),
-    #bg="black",
-    #fg="yellow",
-    #height=2,
     width=25,
 )
 r.place(relx=0.5, rely=0.4, anchor=CENTER)
@@ -334,11 +317,6 @@ r = ttk.Button(
     window,
     text="Take Attendance",
     command=automatic_attedance,
-    #bd=10,
-    #font=("times new roman", 16),
-    #bg="black",
-    #fg="yellow",
-    #height=2,
     width=25,
 )
 r.place(relx=0.5, rely=0.6, anchor=CENTER)
@@ -352,11 +330,6 @@ r = ttk.Button(
     window,
     text="View Attendance",
     command=view_attendance,
-    #bd=10,
-    #font=("times new roman", 16),
-    #bg="black",
-    #fg="yellow",
-    #height=2,
     width=25,
 )
 r.place(relx=0.5, rely=0.8, anchor=CENTER)
