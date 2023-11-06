@@ -1,21 +1,15 @@
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter import *
-import os, cv2
-import shutil
-import csv
-import numpy as np
-from PIL import ImageTk, Image
-import pandas as pd
-import datetime
-import time
-import tkinter.font as font
-import pyttsx3
 
+from gtts import gTTS
+
+import automaticAttedance
 # project module
 import show_attendance
 import takeImage
 import trainImage
-import automaticAttedance
+
 
 # engine = pyttsx3.init()
 # engine.say("Welcome!")
@@ -24,28 +18,50 @@ import automaticAttedance
 
 
 def text_to_speech(user_text):
-    engine = pyttsx3.init()
+    gTTS(user_text)
+    """engine = pyttsx.init()
     engine.say(user_text)
-    engine.runAndWait()
+    engine.runAndWait()"""
 
 
-haarcasecade_path = "C:\\Users\\HP\\Desktop\\face_reco\\haarcascade_frontalface_default.xml"
-trainimagelabel_path = (
-    "C:\\Users\\HP\\Desktop\\face_reco\\TrainingImageLabel\\Trainner.yml"
-)
-trainimage_path = "C:\\Users\\HP\\Desktop\\face_reco\\TrainingImage"
-studentdetail_path = (
-    "C:\\Users\\HP\\Desktop\\face_reco\\StudentDetails\\studentdetails.csv"
-)
-attendance_path = "C:\\Users\\HP\\Desktop\\face_reco\\Attendance"
+haarcasecade_path = "/home/manjaro/Downloads/face_reco/haarcascade_frontalface_default.xml"
+trainimagelabel_path = "/home/manjaro/Downloads/face_reco/TrainingImageLabel/Trainner.yml"
+trainimage_path = "/home/manjaro/Downloads/face_reco/TrainingImage"
+studentdetail_path = "/home/manjaro/Downloads/face_reco/StudentDetails/studentdetails.csv"
+attendance_path = "/home/manjaro/Downloads/face_reco/Attendance"
 
+darksem = "#252526"
 
 window = Tk()
-window.title("Face recognizer")
-window.geometry("1280x720")
+
+# tell tcl where to find the awthemes packages
+window.tk.eval("""
+set base_theme_dir /home/manjaro/Downloads/face_reco/Themes/awthemes
+
+package ifneeded awthemes 10.4.0 \
+    [list source [file join $base_theme_dir awthemes.tcl]]
+package ifneeded colorutils 4.8 \
+    [list source [file join $base_theme_dir colorutils.tcl]]
+package ifneeded awdark 7.12 \
+    [list source [file join $base_theme_dir awdark.tcl]]
+package ifneeded awlight 7.6 \
+    [list source [file join $base_theme_dir awlight.tcl]]
+""")
+# load the awdark and awlight themes
+window.tk.call("package", "require", 'awdark')
+window.tk.call("package", "require", 'awlight')
+
+s = ttk.Style(window)
+s.theme_use('awdark')
+window.title("DIY Attendance")
+window.geometry("260x290")
+window.resizable(0, 0)
 dialog_title = "QUIT"
 dialog_text = "Are you sure want to close?"
-window.configure(background="black")
+window.configure(background=darksem)
+
+"""frameA = tk.Frame()
+frameA.pack(side='top', fill=None)"""
 
 
 # to destroy screen
@@ -56,29 +72,29 @@ def del_sc1():
 # error message for name and no
 def err_screen():
     global sc1
-    sc1 = tk.Tk()
+    sc1 = ttk.Tk()
     sc1.geometry("400x110")
     sc1.iconbitmap("AMS.ico")
     sc1.title("Warning!!")
     sc1.configure(background="black")
     sc1.resizable(0, 0)
-    tk.Label(
+    ttk.Label(
         sc1,
         text="Enrollment & Name required!!!",
-        fg="yellow",
-        bg="black",
+        # fg="yellow",
+        # bg="black",
         font=("times", 20, " bold "),
     ).pack()
-    tk.Button(
+    ttk.Button(
         sc1,
         text="OK",
         command=del_sc1,
-        fg="yellow",
-        bg="black",
+        # fg="yellow",
+        # bg="black",
         width=9,
-        height=1,
-        activebackground="Red",
-        font=("times", 20, " bold "),
+        # height=1,
+        # activebackground="Red",
+        # font=("times", 20, " bold "),
     ).place(x=110, y=50)
 
 
@@ -89,29 +105,17 @@ def testVal(inStr, acttyp):
     return True
 
 
-logo = Image.open("UI_Image/0001.png")
-logo = logo.resize((50, 47), Image.ANTIALIAS)
-logo1 = ImageTk.PhotoImage(logo)
-titl = tk.Label(window, bg="black", relief=RIDGE, bd=10, font=("arial", 35))
-titl.pack(fill=X)
-l1 = tk.Label(window, image=logo1, bg="black",)
-l1.place(x=470, y=10)
-
-titl = tk.Label(
-    window, text="Smart College!!", bg="black", fg="green", font=("arial", 27),
-)
-titl.place(x=525, y=12)
-
-a = tk.Label(
+a = ttk.Label(
     window,
-    text="Welcome to the Face Recognition Based\nAttendance Management System",
-    bg="black",
-    fg="yellow",
-    bd=10,
-    font=("arial", 35),
+    text="IIT KGP Face Attendance Check",
+    # bg=darksem,
+    # fg="yellow",
+    # bd=10,
+    font=("Arial", 35),
+    # style='hFont',
 )
-a.pack()
-
+a.place(relx=0.5, rely=0.15, anchor=CENTER)
+"""
 ri = Image.open("UI_Image/register.png")
 r = ImageTk.PhotoImage(ri)
 label1 = Label(window, image=r)
@@ -129,108 +133,128 @@ v = ImageTk.PhotoImage(vi)
 label3 = Label(window, image=v)
 label3.image = v
 label3.place(x=600, y=270)
+"""
 
 
 def TakeImageUI():
     ImageUI = Tk()
-    ImageUI.title("Take Student Image..")
-    ImageUI.geometry("780x480")
-    ImageUI.configure(background="black")
+    ImageUI.tk.eval("""
+    set base_theme_dir /home/manjaro/Downloads/face_reco/Themes/awthemes
+
+    package ifneeded awthemes 10.4.0 \
+        [list source [file join $base_theme_dir awthemes.tcl]]
+    package ifneeded colorutils 4.8 \
+        [list source [file join $base_theme_dir colorutils.tcl]]
+    package ifneeded awdark 7.12 \
+        [list source [file join $base_theme_dir awdark.tcl]]
+    package ifneeded awlight 7.6 \
+        [list source [file join $base_theme_dir awlight.tcl]]
+    """)
+    # load the awdark and awlight themes
+    ImageUI.tk.call("package", "require", 'awdark')
+    ImageUI.tk.call("package", "require", 'awlight')
+
+    imageUI = ttk.Style(ImageUI)
+    imageUI.theme_use('awdark')
+    ImageUI.configure(background=darksem)
+    ImageUI.title("Take Student Image")
+    ImageUI.geometry("540x300")
     ImageUI.resizable(0, 0)
-    titl = tk.Label(ImageUI, bg="black", relief=RIDGE, bd=10, font=("arial", 35))
-    titl.pack(fill=X)
+
     # image and title
-    titl = tk.Label(
-        ImageUI, text="Register Your Face", bg="black", fg="green", font=("arial", 30),
+    titl = ttk.Label(
+        ImageUI, text="Register Your Face",
+        font=("arial", 30),
     )
-    titl.place(x=270, y=12)
+    titl.place(relx=0.5, rely=0.05, anchor=CENTER)
 
     # heading
-    a = tk.Label(
+    a = ttk.Label(
         ImageUI,
-        text="Enter the details",
-        bg="black",
-        fg="yellow",
-        bd=10,
+        text="Enter the details:-",
+        # bg="black",
+        # fg="yellow",
+        # bd=10,
         font=("arial", 24),
     )
-    a.place(x=280, y=75)
+    a.place(relx=0.22, rely=0.2, anchor=CENTER)
 
     # ER no
-    lbl1 = tk.Label(
+    lbl1 = ttk.Label(
         ImageUI,
-        text="Enrollment No",
-        width=10,
-        height=2,
-        bg="black",
-        fg="yellow",
-        bd=5,
+        text="Enrollment No.:",
+        width=15,
+        # height=2,
+        # bg="black",
+        # fg="yellow",
+        # bd=5,
         relief=RIDGE,
         font=("times new roman", 12),
     )
-    lbl1.place(x=120, y=130)
-    txt1 = tk.Entry(
+    lbl1.place(relx=0.14, rely=0.36, anchor=W)
+    txt1 = ttk.Entry(
         ImageUI,
-        width=17,
-        bd=5,
+        width=18,
+        # bd=5,
         validate="key",
-        bg="black",
-        fg="yellow",
-        relief=RIDGE,
+        # bg="black",
+        # fg="yellow",
+        # relief=RIDGE,
         font=("times", 25, "bold"),
     )
-    txt1.place(x=250, y=130)
+    txt1.place(relx=0.38, rely=0.36, anchor=W)
     txt1["validatecommand"] = (txt1.register(testVal), "%P", "%d")
 
     # name
-    lbl2 = tk.Label(
+    lbl2 = ttk.Label(
         ImageUI,
-        text="Name",
-        width=10,
-        height=2,
-        bg="black",
-        fg="yellow",
-        bd=5,
+        text="Name:",
+        width=15,
+        # height=2,
+        # bg="black",
+        # fg="yellow",
+        # bd=5,
         relief=RIDGE,
         font=("times new roman", 12),
     )
-    lbl2.place(x=120, y=200)
-    txt2 = tk.Entry(
+    lbl2.place(relx=0.14, rely=0.46, anchor=W)
+    txt2 = ttk.Entry(
         ImageUI,
-        width=17,
-        bd=5,
-        bg="black",
-        fg="yellow",
-        relief=RIDGE,
+        width=18,
+        # bd=5,
+        # bg="black",
+        # fg="yellow",
+        # relief=RIDGE,
         font=("times", 25, "bold"),
     )
-    txt2.place(x=250, y=200)
+    txt2.place(relx=0.38, rely=0.46, anchor=W)
 
-    lbl3 = tk.Label(
+    lbl3 = ttk.Label(
         ImageUI,
-        text="Notification",
-        width=10,
-        height=2,
-        bg="black",
-        fg="yellow",
-        bd=5,
+        text="Notification:",
+        width=15,
+        # height=2,
+        # bg="black",
+        # fg="yellow",
+        # bd=5,
         relief=RIDGE,
         font=("times new roman", 12),
     )
-    lbl3.place(x=120, y=270)
+    lbl3.place(relx=0.14, rely=0.56, anchor=W)
 
-    message = tk.Label(
+    # messagey = 0.56 #0.58
+    message = ttk.Label(
         ImageUI,
         text="",
         width=32,
-        height=2,
-        bd=5,
-        bg="black",
-        fg="yellow",
+        # height=2,
+        # bd=5,
+        # bg="black",
+        # fg="yellow",
         relief=RIDGE,
-        font=("times", 12, "bold"),
+        font=("times new roman", 12, "bold"),
     )
-    message.place(x=250, y=270)
+    message.place(relx=0.38, rely=0.56, anchor=W)
 
     def take_image():
         l1 = txt1.get()
@@ -249,19 +273,13 @@ def TakeImageUI():
 
     # take Image button
     # image
-    takeImg = tk.Button(
+    takeImg = ttk.Button(
         ImageUI,
         text="Take Image",
         command=take_image,
-        bd=10,
-        font=("times new roman", 18),
-        bg="black",
-        fg="yellow",
-        height=2,
         width=12,
-        relief=RIDGE,
     )
-    takeImg.place(x=130, y=350)
+    takeImg.place(relx=0.34, rely=0.8, anchor=CENTER)
 
     def train_image():
         trainImage.TrainImage(
@@ -273,80 +291,61 @@ def TakeImageUI():
         )
 
     # train Image function call
-    trainImg = tk.Button(
+    trainImg = ttk.Button(
         ImageUI,
         text="Train Image",
         command=train_image,
-        bd=10,
-        font=("times new roman", 18),
-        bg="black",
-        fg="yellow",
-        height=2,
         width=12,
-        relief=RIDGE,
     )
-    trainImg.place(x=360, y=350)
+    trainImg.place(relx=0.64, rely=0.8, anchor=CENTER)
 
 
-r = tk.Button(
+r = ttk.Button(
     window,
     text="Register a new student",
     command=TakeImageUI,
-    bd=10,
-    font=("times new roman", 16),
-    bg="black",
-    fg="yellow",
-    height=2,
-    width=17,
+    width=25,
 )
-r.place(x=100, y=520)
+r.place(relx=0.5, rely=0.4, anchor=CENTER)
 
 
 def automatic_attedance():
     automaticAttedance.subjectChoose(text_to_speech)
 
 
-r = tk.Button(
+r = ttk.Button(
     window,
     text="Take Attendance",
     command=automatic_attedance,
-    bd=10,
-    font=("times new roman", 16),
-    bg="black",
-    fg="yellow",
-    height=2,
-    width=17,
+    width=25,
 )
-r.place(x=600, y=520)
+r.place(relx=0.5, rely=0.6, anchor=CENTER)
 
 
 def view_attendance():
     show_attendance.subjectchoose(text_to_speech)
 
 
-r = tk.Button(
+r = ttk.Button(
     window,
     text="View Attendance",
     command=view_attendance,
-    bd=10,
-    font=("times new roman", 16),
-    bg="black",
-    fg="yellow",
-    height=2,
-    width=17,
+    width=25,
 )
-r.place(x=1000, y=520)
-r = tk.Button(
+r.place(relx=0.5, rely=0.8, anchor=CENTER)
+"""
+r = ttk.Button(
     window,
     text="EXIT",
-    bd=10,
+    #bd=10,
     command=quit,
-    font=("times new roman", 16),
-    bg="black",
-    fg="yellow",
-    height=2,
-    width=17,
+    #font=("times new roman", 16),
+    #bg="black",
+    #fg="yellow",
+    #height=2,
+    width=20,
 )
 r.place(x=600, y=660)
+"""
 
 window.mainloop()

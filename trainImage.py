@@ -1,4 +1,5 @@
 import csv
+import glob
 import os, cv2
 import numpy as np
 import pandas as pd
@@ -16,17 +17,14 @@ def TrainImage(haarcasecade_path, trainimage_path, trainimagelabel_path, message
     recognizer.save(trainimagelabel_path)
     res = "Image Trained successfully"  # +",".join(str(f) for f in Id)
     message.configure(text=res)
+    message.place(relx=0.382, rely=0.56)
     text_to_speech(res)
 
 
 def getImagesAndLables(path):
     # imagePath = [os.path.join(path, f) for d in os.listdir(path) for f in d]
     newdir = [os.path.join(path, d) for d in os.listdir(path)]
-    imagePath = [
-        os.path.join(newdir[i], f)
-        for i in range(len(newdir))
-        for f in os.listdir(newdir[i])
-    ]
+    imagePath = glob.glob(os.path.join(path, "*/*.jpg"))
     faces = []
     Ids = []
     for imagePath in imagePath:
